@@ -13,6 +13,7 @@ import Workshop from '@/components/Workshop/Workshop';
 import Booking from '@/components/Booking/Booking';
 import Footer from '@/components/Footer/Footer';
 import Reveal from '@/components/util/Reveal';
+import { asset } from '@/lib/content';
 
 export default function Home() {
   return (
@@ -62,8 +63,8 @@ export default function Home() {
           }}
         >
           <video
-            src="/videos/workshop.mp4"
-            poster="/poster.webp"
+            src={asset('/videos/workshop.mp4')}
+            poster={asset('/poster.webp')}
             autoPlay
             muted
             loop

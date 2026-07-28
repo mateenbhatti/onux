@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Sora } from 'next/font/google';
 import './globals.css';
-import { site } from '@/lib/content';
+import { site, asset } from '@/lib/content';
 
 const sans = Inter({
   subsets: ['latin'],
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${site.fullName}`,
     description: 'Precision diagnostics, performance upgrades and expert automotive care.',
-    images: ['/poster.webp'],
+    images: [asset('/poster.webp')],
   },
 };
 

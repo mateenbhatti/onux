@@ -3,6 +3,14 @@
  * anchors should only ever require touching this file.
  */
 
+/**
+ * When hosted under a sub-path (e.g. GitHub Pages at /onux), public assets
+ * referenced as plain strings — frames, poster, video — must be prefixed with
+ * the base path. Next only rewrites <Image>/<Link>, not manual `new Image().src`.
+ */
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
+export const asset = (p: string) => `${BASE_PATH}${p}`;
+
 export const site = {
   name: 'APEX',
   fullName: 'APEX PERFORMANCE WORKSHOP',
@@ -44,9 +52,9 @@ export const sequence = {
   totalFrames: 192,
   fps: 24,
   desktopPath: (i: number) =>
-    `/frames/desktop/frame_${String(i).padStart(3, '0')}.webp`,
+    asset(`/frames/desktop/frame_${String(i).padStart(3, '0')}.webp`),
   mobilePath: (i: number) =>
-    `/frames/mobile/frame_${String(i).padStart(3, '0')}.webp`,
+    asset(`/frames/mobile/frame_${String(i).padStart(3, '0')}.webp`),
   aspect: 1280 / 720,
 };
 
