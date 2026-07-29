@@ -40,7 +40,7 @@ export default function EngineeringSection() {
     <section id="engineering" ref={ref} className="relative min-h-[220vh]">
       <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden px-6 sm:px-10">
         {/* scrim keeps copy readable against the engine detail */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink-950/90 via-ink-950/30 to-ink-950/60" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink-950/85 via-ink-950/15 to-ink-950/45" />
 
         <div className="relative mx-auto grid w-full max-w-[1400px] items-center gap-10 lg:grid-cols-2">
           <div>

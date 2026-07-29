@@ -128,8 +128,8 @@ export default function FrameStage() {
           gy,
           Math.max(vw, vh) * 0.55
         );
-        const glowStrength = 0.1 * influence;
-        glow.addColorStop(0, `rgba(150,170,190,${glowStrength})`);
+        const glowStrength = 0.14 * influence;
+        glow.addColorStop(0, `rgba(170,190,210,${glowStrength})`);
         glow.addColorStop(1, 'rgba(150,170,190,0)');
         ctx.fillStyle = glow;
         ctx.fillRect(0, 0, vw, vh);
@@ -145,7 +145,7 @@ export default function FrameStage() {
         Math.max(vw, vh) * 0.75
       );
       vig.addColorStop(0, 'rgba(5,6,8,0)');
-      vig.addColorStop(1, 'rgba(5,6,8,0.72)');
+      vig.addColorStop(1, 'rgba(5,6,8,0.5)');
       ctx.fillStyle = vig;
       ctx.fillRect(0, 0, vw, vh);
 

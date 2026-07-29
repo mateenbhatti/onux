@@ -9,7 +9,7 @@ export default function PerformanceSection() {
       className="relative flex min-h-[120vh] flex-col justify-center px-6 py-32 sm:px-10"
     >
       {/* subtle scrim so type stays legible over the moving frame */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink-950/85 via-ink-950/40 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink-950/75 via-ink-950/25 to-transparent" />
 
       <div className="relative mx-auto w-full max-w-[1400px]">
         <div className="mb-10 flex items-center gap-4">

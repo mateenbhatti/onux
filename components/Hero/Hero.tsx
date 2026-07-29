@@ -43,8 +43,8 @@ export default function Hero() {
       className="relative flex h-[100svh] w-full items-center justify-center overflow-hidden"
     >
       {/* legibility scrims that don't hide the vehicle */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-ink-950/60 via-transparent to-ink-950/80" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink-950 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-ink-950/45 via-transparent to-ink-950/70" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-ink-950/90 to-transparent" />
 
       <InteractiveHotspots />
 
