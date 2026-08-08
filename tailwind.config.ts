@@ -4,38 +4,43 @@ const config: Config = {
   content: [
     './app/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
-    './lib/**/*.{ts,tsx}',
+    './data/**/*.{ts,tsx}',
+    './hooks/**/*.{ts,tsx}',
   ],
   theme: {
     extend: {
       colors: {
-        ink: {
-          950: '#050608',
-          900: '#0a0c0f',
-          800: '#101317',
-          700: '#171b21',
-          600: '#20262e',
-          500: '#2c333d',
+        // Brand palette — white dominant, green & gold used very sparingly.
+        white: '#FFFFFF',
+        charcoal: {
+          DEFAULT: '#171717',
+          soft: '#3a3a38',
+          muted: '#6b6b66',
         },
-        steel: {
-          400: '#8b94a0',
-          300: '#a9b2be',
-          200: '#c8cfd8',
-          100: '#e6eaef',
+        rice: {
+          green: '#4F6F3A',
+          'green-soft': '#6b8a54',
         },
-        accent: {
-          DEFAULT: '#d94f2a',
-          soft: '#e8724f',
-          glow: 'rgba(217, 79, 42, 0.35)',
+        gold: {
+          DEFAULT: '#C8A951',
+          soft: '#d8bd73',
+          deep: '#a5883b',
         },
+        ivory: '#F7F6F1',
+        line: '#e9e7df',
       },
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
         display: ['var(--font-display)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'Georgia', 'serif'],
       },
       letterSpacing: {
-        ultra: '0.35em',
-        mega: '0.5em',
+        tightest: '-0.045em',
+        ultra: '0.32em',
+        mega: '0.45em',
+      },
+      maxWidth: {
+        edge: '1360px',
       },
       transitionTimingFunction: {
         expo: 'cubic-bezier(0.16, 1, 0.3, 1)',

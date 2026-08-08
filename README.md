@@ -1,111 +1,87 @@
-# APEX — Interactive Cinematic Automotive Workshop
+# Kamran Rice Mill — Premium Scroll‑Driven Website
 
-An award-worthy, immersive automotive performance workshop website. The whole
-experience is built around a single provided cinematic asset, turned into an
-**interactive, scroll- and pointer-driven virtual camera** rather than a looping
-background video.
+A production‑quality marketing site for **Kamran Rice Mill**, a Pakistani rice
+producer and exporter. The centerpiece is a **scroll‑scrubbed hero video**: a
+single rice plant on a pure‑white background that the visitor drives frame‑by‑
+frame with their scroll position, while an eight‑stage story crossfades from
+_Origin_ to _Kamran Rice Mill_.
 
-Built with **Next.js 14 (App Router) · TypeScript · Tailwind CSS · GSAP
-ScrollTrigger · Lenis · Framer Motion**.
+Built with **Next.js (App Router) · React · TypeScript · Tailwind CSS ·
+Framer Motion**.
 
 ---
 
-## The asset & the interaction decision
+## The signature interaction
 
-The provided video is a single **8s / 24fps / 1280×720 (192 frame)** cinematic
-camera move. Inspecting the frames, it is a *scripted linear timeline*, not a
-360° turntable:
+- The hero video is **never autoplayed and never looped**. It stays **paused**
+  and its `currentTime` is mapped directly to scroll progress, so scrolling
+  forward advances the camera and scrolling back rewinds it.
+- Progress → time mapping (duration is read from `video.duration` after
+  `loadedmetadata`, **never hard‑coded**):
 
-| Frames | Beat |
-| ------ | ---- |
-| 0–24   | Symmetric front hero shot in a dark workshop |
-| ~48–72 | Orbit to a 3/4 side profile (wheels, brakes) |
-| ~96–120| Hood/engine bay opens |
-| ~144   | Full twin-turbo engine reveal |
-| ~168–191| Pull-back with an X-ray body |
+  | Scroll | Video time (of ~15s) |
+  | ------ | -------------------- |
+  | 0 %    | 0.00 s               |
+  | 25 %   | 3.76 s               |
+  | 50 %   | 7.52 s               |
+  | 75 %   | 11.28 s              |
+  | 100 %  | final frame          |
 
-Because it is a **linear cinematic sequence**, the honest and strongest
-implementation is a **frame sequence scrubbed by scroll and pointer** — this is
-the technique behind Apple's product pages. It is chosen over `video.currentTime`
-scrubbing because:
+- All of this lives in a reusable hook, [`hooks/useScrollVideo.ts`](hooks/useScrollVideo.ts):
+  scroll listeners are passive, seeks are coalesced through a single
+  `requestAnimationFrame` loop and throttled to frame granularity, geometry is
+  cached and re‑measured on resize, and **no React state changes while
+  scrubbing** (the stage index updates only when it actually crosses a
+  boundary; the progress bar is written directly to the DOM).
+- **Accessibility:** honours `prefers-reduced-motion` — scrubbing is disabled,
+  the video is frozen on a representative frame, and the eight beats are shown
+  as a plain, static list.
 
-- iOS/Safari **cannot** seek `currentTime` smoothly without buffering hitches.
-- Frame sequences give **frame-accurate, jitter-free** control in every browser.
-- The linear timeline maps 1:1 onto the page narrative.
+## Performance & compatibility of the video
 
-We do **not** fake 360° movement the asset can't provide. The "control the
-camera" feeling comes from three honest layers:
+The source clip is served in two formats for smooth, wide support:
 
-1. **Scroll → frame** across the cinematic block (the primary story control).
-2. **Pointer → overscan parallax** (translate + zoom of the drawn frame) for a
-   left/right/up/down camera-pan illusion.
-3. **Pointer → small forward frame nudge** on the hero, so moving toward the
-   right actually *begins the orbit*.
+- `rice-journey.mp4` — H.264, audio stripped, `+faststart` (moov atom at the
+  front so the browser can seek before the whole file downloads). Preferred for
+  hardware‑accelerated seeking.
+- `rice-journey.webm` — VP9 fallback for browsers without H.264.
+- `rice-journey-poster.webp` — first frame, used as the `<video poster>` for a
+  fast, layout‑stable first paint.
 
-All values are interpolated with frame-rate-independent damping — smooth,
-inertial, no jumps.
+## Content is data, not markup
 
-## Frame-extraction workflow (reproducible)
+Company facts and the scroll story are centralised so copy changes never touch
+component code:
 
-Frames are pre-generated as optimized **WebP** at two resolutions and committed
-under `public/frames`. To regenerate from a source video:
+- [`data/siteContent.ts`](data/siteContent.ts) — company info, nav, products,
+  capacity, processing, export, contact, SEO.
+- [`data/journeyStages.ts`](data/journeyStages.ts) — the eight scroll stages
+  and their scroll‑progress ranges.
 
-```bash
-# Desktop set — 1280×720
-ffmpeg -i source.mp4 -vf "scale=1280:720" -c:v libwebp -q:v 70 \
-  -compression_level 6 public/frames/desktop/frame_%03d.webp
+> ⚠️ **Verify before launch.** The official site (kamranricemill.com) was
+> unreachable from the build environment, so figures marked `[VERIFY]` in
+> `data/siteContent.ts` (year established, storage/production capacity, contact
+> email, and the product line‑up) come from the project brief and must be
+> confirmed against the official website. No certifications, export countries,
+> or machinery brands are asserted anywhere, because none could be verified.
 
-# Mobile set — 720×405 (≈half the bytes)
-ffmpeg -i source.mp4 -vf "scale=720:405" -c:v libwebp -q:v 68 \
-  -compression_level 6 public/frames/mobile/frame_%03d.webp
-```
-
-Result: desktop ≈ 7 MB / 192 frames (~36 KB avg), mobile ≈ 3.6 MB. Frames are
-served with `immutable` cache headers (see `next.config.mjs`).
-
-## Rendering & performance
-
-- A **single fixed `<canvas>`** (`components/FrameStage`) draws the current
-  frame with cover-fit, overscan parallax and a cinematic light/vignette pass,
-  on one `requestAnimationFrame` loop.
-- Pointer and scroll write to a **plain mutable store** (`lib/interaction/store`)
-  that the canvas reads directly — **no React re-renders** on pointer/scroll.
-- **Progressive loading** (`lib/video/frameLoader`): a small hero-window batch
-  loads first (real % shown in the intro), the rest streams in concurrent
-  lanes. Missing frames fall back to the nearest decoded one — never a blank.
-- Desktop vs mobile frame set chosen once by viewport/pointer type.
-- DPR capped at 2; GPU-friendly `transform`/`translate3d`; `IntersectionObserver`
-  for reveal animations.
-
-## Accessibility & resilience
-
-- **`prefers-reduced-motion`**: disables Lenis smoothing, pointer parallax and
-  inertia; frames snap directly to scroll so the *content* still reveals.
-- **Touch devices**: custom cursor and pointer parallax are disabled; the story
-  is driven entirely by native scroll scrubbing and swipe.
-- **No-JS / canvas failure**: a `<noscript>` fallback plays the original video.
-- Missing-frame tolerance, load-time fallback in the preloader (max 9s).
-
-## Project structure
+## Structure
 
 ```
-app/                     layout, page, globals, favicon
+app/
+  layout.tsx        # fonts, SEO metadata, Open Graph/Twitter, JSON-LD
+  page.tsx          # section composition
+  globals.css       # white-dominant base, reduced-motion
 components/
-  FrameStage/            the pinned canvas film renderer
-  ScrollController/      Lenis + GSAP scroll→frame mapping, PointerTracker
-  Hero/                  hero + subtle text parallax
-  InteractiveHotspots/   vehicle hotspots (engine, wheels, bodywork, diagnostics)
-  PerformanceSection/    scroll-revealed typography + stats
-  EngineeringSection/    "scroll to open the bay" engine reveal
-  Services/              premium service grid w/ spotlight + tilt
-  WhyUs/  Workshop/  Booking/  Navigation/  CustomCursor/  Preloader/  Footer/
-lib/
-  content.ts             ALL copy, services, hotspots, camera marks
-  interaction/           store, math (lerp/damp/clamp), ui hook
-  video/                 progressive frame loader
+  Navbar.tsx  RiceJourney.tsx  JourneyStage.tsx  ProgressIndicator.tsx
+  About.tsx  Products.tsx  Processing.tsx  Capacity.tsx  GlobalReach.tsx
+  PrivateLabel.tsx  QuoteForm.tsx  Contact.tsx  Footer.tsx
+  ui/ Reveal.tsx  CountUp.tsx
+hooks/  useScrollVideo.ts
+data/   siteContent.ts  journeyStages.ts
 public/
-  frames/desktop|mobile  WebP frame sequences
-  videos/                original mp4 (noscript fallback)
+  brand/kamran-rice-mill-logo.png
+  videos/rice-journey.{mp4,webm}  rice-journey-poster.webp
 ```
 
 ## Develop
@@ -113,8 +89,15 @@ public/
 ```bash
 npm install
 npm run dev      # http://localhost:3000
-npm run build && npm run start
+npm run build    # production build
+npm start        # serve the production build
 ```
 
-All copy lives in `lib/content.ts`. The booking form's `onSubmit` is a demo —
-wire it to your CRM/endpoint there.
+### Static export (GitHub Pages)
+
+```bash
+NEXT_EXPORT=true NEXT_PUBLIC_BASE_PATH=/onux npm run build   # → ./out
+```
+
+The `NEXT_PUBLIC_BASE_PATH` is applied to asset paths (logo, video, poster) via
+the `asset()` helper so the site works when served from a sub‑path.

@@ -3,7 +3,7 @@ name: Deploy demo to GitHub Pages
 on:
   push:
     branches:
-      - claude/automotive-workshop-interactive-4kt17z
+      - claude/kamran-rice-mill-site-qfvmam
   workflow_dispatch:
 
 # Permissions required for GitHub Pages deployment.
