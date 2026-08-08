@@ -83,7 +83,7 @@ export default function RiceJourney() {
         <video
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-contain object-[50%_23%] sm:object-center"
-          poster={asset('/videos/rice-journey-poster.webp')}
+          poster={asset('/videos/rice-journey-poster.jpg')}
           muted
           playsInline
           preload="auto"

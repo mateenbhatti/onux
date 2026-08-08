@@ -140,6 +140,10 @@ export function useScrollVideo(
       duration = video.duration || 0;
       setReady(true);
       measure();
+      // Unlock frame painting before the first seek. Mobile Safari will not
+      // render a programmatic `currentTime` change until the element has been
+      // played once, so a muted, one-frame play→pause primes the decoder.
+      prime();
       if (mql.matches) {
         applyReducedFrame();
       } else {
@@ -172,9 +176,48 @@ export function useScrollVideo(
       }
     };
 
-    // Video must never play — enforce paused even if something calls play().
+    // One-time "prime": play the muted video just long enough to paint a
+    // frame, then pause. This is required on iOS/Safari for scrubbing to show
+    // anything; without it the element stays blank after the poster. Muted +
+    // playsInline lets this run without a gesture on most devices; if the
+    // browser still blocks it, the first touch/pointer/click retries.
+    let primed = false;
+    const prime = () => {
+      if (primed || mql.matches) return;
+      const p = video.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => {
+          primed = true;
+          // Let one frame render, then freeze and snap to scroll position.
+          requestAnimationFrame(() => {
+            try {
+              video.pause();
+            } catch {
+              /* ignore */
+            }
+            lastSetTime = -1;
+            queueRender();
+          });
+        }).catch(() => {
+          /* autoplay blocked — a user gesture will retry via primeOnGesture */
+        });
+      } else {
+        primed = true;
+        try {
+          video.pause();
+        } catch {
+          /* ignore */
+        }
+      }
+    };
+
+    const primeOnGesture = () => {
+      if (!primed) prime();
+    };
+
+    // After priming, the video must stay paused — it only ever moves by seek.
     const keepPaused = () => {
-      if (!video.paused) video.pause();
+      if (primed && !video.paused) video.pause();
     };
 
     // Init
@@ -182,6 +225,9 @@ export function useScrollVideo(
     video.pause();
     video.addEventListener('play', keepPaused);
     video.addEventListener('loadedmetadata', onLoadedMetadata);
+    window.addEventListener('touchstart', primeOnGesture, { passive: true });
+    window.addEventListener('pointerdown', primeOnGesture, { passive: true });
+    window.addEventListener('click', primeOnGesture);
 
     // Measure immediately — the section height is viewport-based, so geometry
     // is valid before metadata arrives. This keeps progress correct even if
@@ -205,6 +251,9 @@ export function useScrollVideo(
       disableScrubbing();
       video.removeEventListener('play', keepPaused);
       video.removeEventListener('loadedmetadata', onLoadedMetadata);
+      window.removeEventListener('touchstart', primeOnGesture);
+      window.removeEventListener('pointerdown', primeOnGesture);
+      window.removeEventListener('click', primeOnGesture);
       if (mql.removeEventListener)
         mql.removeEventListener('change', onMotionPrefChange);
       else mql.removeListener(onMotionPrefChange);
