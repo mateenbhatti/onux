@@ -76,8 +76,12 @@ const orgJsonLd = {
   logo: `${site.url}${site.logo}`,
   slogan: site.tagline,
   description: site.description,
+  foundingDate: '1990',
+  founder: { '@type': 'Person', name: 'Mian Sultan Mehmood' },
   address: {
     '@type': 'PostalAddress',
+    addressLocality: 'Arifwala',
+    addressRegion: 'Punjab',
     addressCountry: 'PK',
   },
   areaServed: 'Worldwide',

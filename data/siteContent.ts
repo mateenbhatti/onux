@@ -44,14 +44,14 @@ export const hero = {
 
 export const about = {
   eyebrow: 'About',
-  // [VERIFY] Year of establishment — confirm on kamranricemill.com.
-  established: 1999,
+  // Heritage: cornerstone laid in 1990, formally incorporated 1998 (owner-provided).
+  established: 1990,
   establishedLabel: 'Established',
   statement: 'Built around rice.\nDriven by quality.',
-  lead: 'Kamran Rice Mill was built around a single commitment — to deliver rice of consistent, dependable quality from the fields of Pakistan to buyers around the world.',
+  lead: 'As Pakistan’s preeminent Basmati rice exporter and a constituent of the nation’s top 10 exporters, Kamran Rice Mills epitomizes an unwavering commitment to quality, consistency, and time-honored heritage.',
   paragraphs: [
-    'Rooted in Pakistan, one of the world’s great rice-growing regions, we bring together carefully selected paddy, modern processing and years of hands-on experience to produce rice that meets the expectations of demanding markets.',
-    'Every stage — from the paddy we source, to cleaning, processing, sorting and polishing — is guided by the same principle: purity in every grain. It is a standard we hold from the first grain to the finished product.',
+    'Acknowledged as one of Pakistan’s largest rice processing enterprises, the company’s trajectory commenced under the visionary stewardship of Mian Sultan Mehmood, whose relentless pursuit of excellence in rice milling established the cornerstone of the organization in 1990.',
+    'Formally incorporated in 1998 in Arifwala, District Pakpattan, Kamran Rice Mills was founded on a singular mandate: to attain superlative standards in rice processing and to ensure unparalleled satisfaction for its discerning global clientele. Across the ensuing decades, the enterprise has ascended to prominence as a leading exporter of premium Basmati rice, steadfastly upholding its legacy of delivering consummate quality from Pakistan to markets across the world.',
   ],
 } as const;
 
@@ -134,7 +134,7 @@ export const capacity = {
   stats: [
     { value: 50000, display: '50,000', unit: 'MT', label: 'Storage Capacity' }, // [VERIFY]
     { value: 100, display: '100', unit: 'MT / Day', label: 'Production Capacity' }, // [VERIFY]
-    { value: 1999, display: '1999', unit: '', label: 'Established' }, // [VERIFY]
+    { value: 1990, display: '1990', unit: '', label: 'Established' },
   ],
 } as const;
 
