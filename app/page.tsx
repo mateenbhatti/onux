@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar';
 import RiceJourney from '@/components/RiceJourney';
 import About from '@/components/About';
 import Products from '@/components/Products';
+import BinSultan from '@/components/BinSultan';
 import Processing from '@/components/Processing';
 import Capacity from '@/components/Capacity';
 import GlobalReach from '@/components/GlobalReach';
@@ -21,6 +22,7 @@ export default function Home() {
         {/* Narrative */}
         <About />
         <Products />
+        <BinSultan />
         <Processing />
         <Capacity />
         <GlobalReach />

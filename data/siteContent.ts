@@ -27,6 +27,7 @@ export const site = {
 export const nav: { label: string; href: string }[] = [
   { label: 'About', href: '#about' },
   { label: 'Rice', href: '#rice' },
+  { label: 'Bin Sultan', href: '#bin-sultan' },
   { label: 'Processing', href: '#processing' },
   { label: 'Export', href: '#export' },
   { label: 'Contact', href: '#contact' },
@@ -48,11 +49,30 @@ export const about = {
   established: 1990,
   establishedLabel: 'Established',
   statement: 'Built around rice.\nDriven by quality.',
-  lead: 'As Pakistan’s preeminent Basmati rice exporter and a constituent of the nation’s top 10 exporters, Kamran Rice Mills epitomizes an unwavering commitment to quality, consistency, and time-honored heritage.',
+  lead: 'As Pakistan’s preeminent Basmati rice exporter and a constituent of the nation’s top 10 exporters, Kamran Rice Mill epitomizes an unwavering commitment to quality, consistency, and time-honored heritage.',
   paragraphs: [
     'Acknowledged as one of Pakistan’s largest rice processing enterprises, the company’s trajectory commenced under the visionary stewardship of Mian Sultan Mehmood, whose relentless pursuit of excellence in rice milling established the cornerstone of the organization in 1990.',
-    'Formally incorporated in 1998 in Arifwala, District Pakpattan, Kamran Rice Mills was founded on a singular mandate: to attain superlative standards in rice processing and to ensure unparalleled satisfaction for its discerning global clientele. Across the ensuing decades, the enterprise has ascended to prominence as a leading exporter of premium Basmati rice, steadfastly upholding its legacy of delivering consummate quality from Pakistan to markets across the world.',
+    'Formally incorporated in 1998 in Arifwala, District Pakpattan, Kamran Rice Mill was founded on a singular mandate: to attain superlative standards in rice processing and to ensure unparalleled satisfaction for its discerning global clientele. Across the ensuing decades, the enterprise has ascended to prominence as a leading exporter of premium Basmati rice, steadfastly upholding its legacy of delivering consummate quality from Pakistan to markets across the world.',
   ],
+} as const;
+
+/** Flagship retail/wholesale brand — copy provided by the owner. */
+export const binSultan = {
+  eyebrow: 'Our Brand',
+  name: 'Bin Sultan Rice',
+  tagline: 'Pakistan’s Finest. The World’s Choice.',
+  lead: 'Bin Sultan Rice was built with one clear mission: to set the gold standard for Pakistani rice and become a global favorite.',
+  paragraphs: [
+    'We’re obsessed with quality. Every grain is delivered with consistency and a promise — 100% customer satisfaction, every single time.',
+    'Today, Bin Sultan is one of Pakistan’s fastest-growing rice brands across modern retail and wholesale — and we’re going global, bringing our premium Basmati to kitchens around the world.',
+  ],
+  points: [
+    { title: 'The gold standard', body: 'Built to set the benchmark for premium Pakistani Basmati.' },
+    { title: '100% satisfaction', body: 'A promise of consistent quality in every single pack.' },
+    { title: 'Retail & wholesale', body: 'One of Pakistan’s fastest-growing rice brands on modern shelves.' },
+    { title: 'Going global', body: 'Premium Basmati, expanding to kitchens around the world.' },
+  ],
+  cta: { label: 'Stock Bin Sultan', href: '#quote' },
 } as const;
 
 export type Product = {
