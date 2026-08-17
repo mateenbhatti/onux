@@ -4,6 +4,7 @@ import About from '@/components/About';
 import Products from '@/components/Products';
 import BinSultan from '@/components/BinSultan';
 import Processing from '@/components/Processing';
+import Certifications from '@/components/Certifications';
 import Capacity from '@/components/Capacity';
 import GlobalReach from '@/components/GlobalReach';
 import PrivateLabel from '@/components/PrivateLabel';
@@ -24,6 +25,7 @@ export default function Home() {
         <Products />
         <BinSultan />
         <Processing />
+        <Certifications />
         <Capacity />
         <GlobalReach />
         <PrivateLabel />

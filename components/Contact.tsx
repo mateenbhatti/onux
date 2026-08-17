@@ -20,8 +20,39 @@ export default function Contact() {
             </Reveal>
           </div>
 
-          <div className="lg:col-span-5 lg:col-start-8">
-            <dl className="divide-y divide-line border-t border-line">
+          <div className="lg:col-span-6 lg:col-start-7">
+            {/* Offices */}
+            <div className="grid gap-8 sm:grid-cols-2">
+              {contact.offices.map((office) => (
+                <Reveal key={office.label}>
+                  <p className="text-[11px] font-semibold uppercase tracking-ultra text-gold-deep">
+                    {office.label}
+                  </p>
+                  <p className="mt-3 text-[15px] leading-relaxed text-charcoal">
+                    {office.address}
+                  </p>
+                </Reveal>
+              ))}
+            </div>
+
+            {/* Phone / email */}
+            <dl className="mt-10 divide-y divide-line border-t border-line">
+              <div className="flex items-baseline justify-between gap-6 py-5">
+                <dt className="text-[11px] font-semibold uppercase tracking-ultra text-charcoal-muted">
+                  Phone
+                </dt>
+                <dd className="text-right">
+                  {contact.phones.map((phone) => (
+                    <a
+                      key={phone}
+                      href={`tel:${phone.replace(/[^+\d]/g, '')}`}
+                      className="block text-[15px] font-medium text-charcoal transition-colors hover:text-rice-green"
+                    >
+                      {phone}
+                    </a>
+                  ))}
+                </dd>
+              </div>
               <div className="flex items-baseline justify-between gap-6 py-5">
                 <dt className="text-[11px] font-semibold uppercase tracking-ultra text-charcoal-muted">
                   Email
@@ -48,14 +79,6 @@ export default function Contact() {
                   >
                     {contact.website}
                   </a>
-                </dd>
-              </div>
-              <div className="flex items-baseline justify-between gap-6 py-5">
-                <dt className="text-[11px] font-semibold uppercase tracking-ultra text-charcoal-muted">
-                  Origin
-                </dt>
-                <dd className="text-[15px] font-medium text-charcoal">
-                  {contact.country}
                 </dd>
               </div>
             </dl>

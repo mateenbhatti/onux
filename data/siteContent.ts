@@ -2,14 +2,8 @@
  * SINGLE SOURCE OF TRUTH — Kamran Rice Mill
  * ------------------------------------------------------------------
  * All company-facing copy lives here so content can be edited without
- * touching component code.
- *
- * ⚠️ FIGURES MARKED  [VERIFY]  COULD NOT BE CONFIRMED AT BUILD TIME.
- * The official site (kamranricemill.com) was unreachable from the build
- * environment, so the numeric/company facts below come from the project
- * brief and MUST be checked against the official website before launch.
- * No certifications, export countries, or machinery brands are asserted
- * anywhere on the site because none could be verified.
+ * touching component code. Facts below are sourced from the official
+ * website content (kamranricemill.com) supplied by the owner.
  */
 
 export const site = {
@@ -21,7 +15,7 @@ export const site = {
   country: 'Pakistan',
   logo: '/brand/kamran-rice-mill-logo.png',
   description:
-    'Kamran Rice Mill is a Pakistani rice producer and exporter delivering premium rice — cultivated with care, carefully processed and prepared for international markets.',
+    'Kamran Rice Mill is one of the largest rice processing mills in Arifwala, Punjab, Pakistan — exporting premium basmati and long-grain rice worldwide since 1999, with 50,000 MT storage, 100 MT/day production and Halal & HACCP certification.',
 } as const;
 
 export const nav: { label: string; href: string }[] = [
@@ -37,7 +31,7 @@ export const hero = {
   eyebrow: 'Kamran Rice Mill',
   headline: ['From one grain', 'to the world.'],
   support:
-    'Premium Pakistani rice, cultivated with care and prepared for global markets.',
+    'Premium Pakistani basmati and long-grain rice from Arifwala, Punjab — processed with world-class technology and delivered to global markets.',
   primaryCta: { label: 'Explore Our Rice', href: '#rice' },
   secondaryCta: { label: 'Request a Quote', href: '#quote' },
   scrollHint: 'Scroll to follow the grain',
@@ -45,14 +39,13 @@ export const hero = {
 
 export const about = {
   eyebrow: 'About',
-  // Heritage: cornerstone laid in 1990, formally incorporated 1998 (owner-provided).
-  established: 1990,
+  established: 1999,
   establishedLabel: 'Established',
-  statement: 'Built around rice.\nDriven by quality.',
-  lead: 'As Pakistan’s preeminent Basmati rice exporter and a constituent of the nation’s top 10 exporters, Kamran Rice Mill epitomizes an unwavering commitment to quality, consistency, and time-honored heritage.',
+  statement: 'From harvest\nto perfection.',
+  lead: 'Kamran Rice Mill is one of the largest and most reputable rice processing mills in Arifwala, Punjab.',
   paragraphs: [
-    'Acknowledged as one of Pakistan’s largest rice processing enterprises, the company’s trajectory commenced under the visionary stewardship of Mian Sultan Mehmood, whose relentless pursuit of excellence in rice milling established the cornerstone of the organization in 1990.',
-    'Formally incorporated in 1998 in Arifwala, District Pakpattan, Kamran Rice Mill was founded on a singular mandate: to attain superlative standards in rice processing and to ensure unparalleled satisfaction for its discerning global clientele. Across the ensuing decades, the enterprise has ascended to prominence as a leading exporter of premium Basmati rice, steadfastly upholding its legacy of delivering consummate quality from Pakistan to markets across the world.',
+    'Since its establishment in 1999, the mill has grown into a fully integrated rice processing facility operating on 30+ acres of land, equipped with advanced technology and high-capacity storage and production systems.',
+    'With a commitment to quality, innovation and excellence, Kamran Rice Mill has become Arifwala’s top rice mill in production, storage and operational scale — delivering authentic basmati and long-grain rice to domestic and export markets.',
   ],
 } as const;
 
@@ -82,47 +75,28 @@ export type Product = {
   description: string;
 };
 
-/**
- * [VERIFY] Rice line-up. These are the principal rice varieties grown and
- * exported from Pakistan, presented generically. Confirm and trim this list
- * to the varieties Kamran Rice Mill actually produces before launch — do not
- * present a variety the mill does not offer.
- */
+/** Rice line-up — the mill's specialised premium basmati and parboiled varieties. */
 export const products: Product[] = [
   {
-    id: 'super-basmati',
-    name: 'Super Basmati',
-    variety: 'Long-grain aromatic basmati',
+    id: 'sella-parboiled',
+    name: 'Basmati Parboiled (Sella) Rice',
+    variety: 'Parboiled basmati',
     description:
-      'A celebrated Pakistani basmati prized for its fine aroma, slender grain and clean separation after cooking.',
+      'Premium parboiled basmati with firm, separate grains and a golden finish — processed with strict precision for aroma, grain length and purity.',
   },
   {
     id: '1121-basmati',
-    name: '1121 Basmati',
-    variety: 'Extra-long-grain basmati · Steam & Sella',
+    name: '1121 Basmati Rice',
+    variety: 'Extra-long-grain basmati',
     description:
-      'One of the longest basmati grains in the world, elongating further on cooking — available in steam and parboiled (sella) forms.',
+      'One of the longest basmati grains in the world, elongating further on cooking — prized for its distinctive aroma and slender, elegant grain.',
   },
   {
-    id: 'basmati',
-    name: 'Basmati',
-    variety: 'Classic aromatic basmati',
+    id: '1509-basmati',
+    name: '1509 Basmati Rice',
+    variety: 'Long-grain aromatic basmati',
     description:
-      'The traditional fragrant long-grain rice, a benchmark of quality across South Asian and international kitchens.',
-  },
-  {
-    id: 'long-grain-white',
-    name: 'Long Grain White Rice',
-    variety: 'Non-basmati long grain',
-    description:
-      'A versatile, consistent long-grain white rice suited to everyday volume supply and a wide range of cuisines.',
-  },
-  {
-    id: 'irri-long-grain',
-    name: 'IRRI Long Grain',
-    variety: 'Non-basmati commodity rice',
-    description:
-      'A dependable, cost-effective long-grain variety produced for bulk and institutional export requirements.',
+      'A refined long-grain basmati known for its clean, fragrant character and consistent cooking — a favourite of international markets.',
   },
 ] as const;
 
@@ -130,31 +104,39 @@ export const processing = {
   eyebrow: 'Processing & Quality',
   title: 'From paddy to perfection',
   intro:
-    'Modern processing and careful sorting turn carefully harvested paddy into clean, consistent, refined rice.',
-  // Visual flow — kept generic; no machinery specifications are claimed.
+    'Our facility combines leading Pakistani preparation methods with advanced European (Bühler) and Chinese processing technology — with modern paddy dryers, sortex machines, polishing units and a dedicated quality-control laboratory delivering consistently perfect grains.',
   steps: [
     { n: '01', label: 'Paddy', note: 'Carefully selected paddy forms the foundation of every grain.' },
-    { n: '02', label: 'Cleaning', note: 'Impurities are removed to prepare a clean, uniform batch.' },
-    { n: '03', label: 'Processing', note: 'Paddy is transformed into clean, consistent rice.' },
-    { n: '04', label: 'Sorting', note: 'Grains are sorted for consistency and appearance.' },
-    { n: '05', label: 'Polishing', note: 'Careful polishing brings out a refined finish.' },
-    { n: '06', label: 'Premium Rice', note: 'The finished grain — consistent, refined and export-ready.' },
+    { n: '02', label: 'Drying & Cleaning', note: 'Modern paddy dryers and cleaning remove impurities for a uniform batch.' },
+    { n: '03', label: 'Processing', note: 'European (Bühler) and Chinese milling technology transforms paddy into clean, consistent rice.' },
+    { n: '04', label: 'Sortex Sorting', note: 'Sortex colour-sorting grades every grain for consistency and appearance.' },
+    { n: '05', label: 'Polishing', note: 'Precision polishing units bring out a refined, export-grade finish.' },
+    { n: '06', label: 'Premium Rice', note: 'Quality-lab checked, packed and dispatched — consistent, refined and export-ready.' },
   ],
 } as const;
 
-/**
- * [VERIFY] Headline capacity figures — confirm on kamranricemill.com.
- * Displayed as large editorial numbers, not boxed cards.
- */
+/** Certifications — international food-safety and quality standards. */
+export const certifications = {
+  eyebrow: 'Certifications',
+  title: 'Certified to global standards.',
+  intro:
+    'Kamran Rice Mill adheres to international food-safety and quality standards, reflecting our dedication to safe, hygienic and globally compliant rice production.',
+  items: [
+    { name: 'Halal', note: 'Halal Certified' },
+    { name: 'HACCP', note: 'HACCP Certified' },
+  ],
+} as const;
+
+/** Headline capacity & scale figures (official website). */
 export const capacity = {
   eyebrow: 'Capacity',
   title: 'Built for scale.',
   intro:
-    'Purpose-built to store, process and deliver rice with the consistency that international supply demands.',
+    'Operating across 30+ acres in Arifwala, Punjab, Kamran Rice Mill is one of the highest-capacity mills in the region — purpose-built to store, process and deliver rice with the consistency that domestic and export markets demand.',
   stats: [
-    { value: 50000, display: '50,000', unit: 'MT', label: 'Storage Capacity' }, // [VERIFY]
-    { value: 100, display: '100', unit: 'MT / Day', label: 'Production Capacity' }, // [VERIFY]
-    { value: 1990, display: '1990', unit: '', label: 'Established' },
+    { value: 50000, display: '50,000', unit: 'MT', label: 'Storage Capacity' },
+    { value: 100, display: '100', unit: 'MT / Day', label: 'Production Capacity' },
+    { value: 1999, display: '1999', unit: '', label: 'Established' },
   ],
 } as const;
 
@@ -192,34 +174,40 @@ export const quote = {
   intro: 'Tell us what you’re looking for and our team will get back to you.',
   submitLabel: 'Request a Quote',
   riceTypes: [
-    'Super Basmati',
-    '1121 Basmati (Steam)',
-    '1121 Basmati (Sella)',
-    'Basmati',
-    'Long Grain White Rice',
-    'IRRI Long Grain',
+    'Basmati Parboiled (Sella) Rice',
+    '1121 Basmati Rice',
+    '1509 Basmati Rice',
+    'Long Grain Rice',
     'Other / Not sure',
   ],
 } as const;
 
-/**
- * [VERIFY] Contact details. The email is derived from the company domain and
- * the country is factual; a specific street address and phone number were NOT
- * invented because they could not be verified. Confirm/replace before launch.
- */
+/** Contact details (official website). */
 export const contact = {
   eyebrow: 'Contact',
   title: 'Let’s talk rice.',
   intro:
     'Whether you’re an importer, distributor or retail buyer, we’d be glad to hear from you.',
-  email: 'info@kamranricemill.com', // [VERIFY]
+  email: 'info@kamranricemill.com',
   website: 'kamranricemill.com',
   country: 'Pakistan',
+  phones: ['+92 (339) 7540001', '+92 (457) 540001'],
+  offices: [
+    {
+      label: 'Rice Processing Mill',
+      address: '04 KM, Burewala Road, Arifwala-57450, Punjab, Pakistan',
+    },
+    {
+      label: 'Grain Market Office',
+      address:
+        'Office No. 03, Near Market Committee Office, Grain Market, Arifwala-57450, Punjab, Pakistan',
+    },
+  ],
 } as const;
 
 export const footer = {
   blurb:
-    'Premium Pakistani rice — produced with consistency, care and experience, and prepared for international markets.',
+    'One of the largest rice processing mills in Arifwala, Punjab — exporting premium basmati and long-grain rice worldwide since 1999.',
 } as const;
 
 /** Resolve a public asset path, honouring an optional static-export basePath. */

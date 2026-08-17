@@ -76,15 +76,19 @@ const orgJsonLd = {
   logo: `${site.url}${site.logo}`,
   slogan: site.tagline,
   description: site.description,
-  foundingDate: '1990',
-  founder: { '@type': 'Person', name: 'Mian Sultan Mehmood' },
+  foundingDate: '1999',
+  telephone: '+92 (339) 7540001',
+  email: 'info@kamranricemill.com',
   address: {
     '@type': 'PostalAddress',
+    streetAddress: '04 KM, Burewala Road',
     addressLocality: 'Arifwala',
+    postalCode: '57450',
     addressRegion: 'Punjab',
     addressCountry: 'PK',
   },
   areaServed: 'Worldwide',
+  hasCredential: ['Halal Certified', 'HACCP Certified'],
 };
 
 export default function RootLayout({

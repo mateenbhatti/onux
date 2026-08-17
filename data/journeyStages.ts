@@ -53,7 +53,7 @@ export const journeyStages: JourneyStage[] = [
     id: 5,
     label: '05 / Precision',
     title: 'Precision in every grain',
-    copy: 'Advanced processing technology and experience help us maintain consistency from paddy to finished rice.',
+    copy: 'Advanced European (Bühler) and Chinese processing technology, sortex sorting and years of experience keep every grain consistent from paddy to finished rice.',
     range: [0.55, 0.68],
   },
   {
