@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Business Balance Tracker</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#1b2430;--mute:#6b7785;--line:#e3e8ee;--brand:#0b6bcb;--in:#15803d;--out:#c2410c;--neg:#b91c1c}
+@media (prefers-color-scheme:dark){:root{--bg:#10151b;--card:#18202a;--ink:#e8edf2;--mute:#93a1b0;--line:#2a3542;--brand:#4aa3ff;--in:#4ade80;--out:#fb923c;--neg:#f87171}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:0}
+h2{font-size:15px;margin:0 0 10px}
+.top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.grid{display:grid;gap:12px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.stat .l{color:var(--mute);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.stat .v{font-size:22px;font-weight:700;margin-top:2px}
+.in{color:var(--in)}.out{color:var(--out)}.neg{color:var(--neg)}
+label{display:block;font-size:12px;color:var(--mute);margin-bottom:3px}
+input,select,button{font:inherit;color:inherit}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+button{padding:9px 14px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer}
+button.p{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+button.s{padding:5px 9px;font-size:13px}
+button:hover{filter:brightness(.96)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>div{flex:1 1 130px}
+.row>div.w2{flex:2 1 220px}
+.row>div.fit{flex:0 0 auto}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chips button{padding:5px 10px;font-size:13px;border-radius:99px}
+.chips button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--mute);font-size:12px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.zero td{color:var(--mute)}
+tfoot td{font-weight:700;border-top:2px solid var(--line)}
+.scroll{overflow-x:auto}
+.note{color:var(--mute);font-size:12.5px}
+.empty{color:var(--mute);padding:10px 0}
+.printhead{display:none}
+@media print{
+ body{background:#fff;color:#000;font-size:12px}
+ .wrap{max-width:none;padding:0}
+ .noprint,.top,.card.noprint{display:none!important}
+ .card{border:none;padding:0;margin:0 0 12px;background:#fff}
+ .printhead{display:block;margin-bottom:10px}
+ .printhead h1{font-size:18px}
+ .in,.out,.neg{color:#000}
+ th,td{padding:4px 6px}
+ tr{page-break-inside:avoid}
+ .stat .v{font-size:16px}
+ :root{--line:#bbb;--mute:#444}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="top noprint">
+  <h1>Business Balance Tracker</h1>
+  <div class="row" style="flex:0 0 auto">
+   <div class="fit"><button id="btnPdf" class="p">Save report as PDF</button></div>
+   <div class="fit"><button id="btnCsv">Export CSV</button></div>
+   <div class="fit"><button id="btnBackup">Backup</button></div>
+   <div class="fit"><button id="btnRestore">Restore</button><input id="fileRestore" type="file" accept=".json" hidden></div>
+  </div>
+ </div>
+
+ <div class="printhead">
+  <h1 id="phTitle"></h1>
+  <div id="phRange" class="note"></div>
+ </div>
+
+ <div class="card noprint">
+  <div class="row">
+   <div class="w2"><label>Business name (shown on the PDF)</label><input id="bizName" placeholder="Meit Shop"></div>
+   <div><label>Month</label><input id="monthPick" type="month"></div>
+   <div><label>Opening balance for the month (Rs)</label><input id="openingInput" type="number" step="any" placeholder="auto"></div>
+   <div class="fit"><button id="btnOpening" class="p">Save opening</button></div>
+   <div class="fit"><button id="btnOpeningAuto">Use auto (carry over)</button></div>
+  </div>
+  <div id="openingNote" class="note" style="margin-top:8px"></div>
+ </div>
+
+ <div class="card noprint">
+  <h2 id="formTitle">Add money or expense</h2>
+  <div class="row">
+   <div><label>Date</label><input id="fDate" type="date"></div>
+   <div><label>Type</label>
+    <select id="fType"><option value="out">Expense</option><option value="in">Money in</option></select></div>
+   <div><label>Category</label><input id="fCat" list="cats" placeholder="e.g. Meta ads"><datalist id="cats"></datalist></div>
+   <div class="w2"><label>Note</label><input id="fNote" placeholder="optional"></div>
+   <div><label>Amount (Rs)</label><input id="fAmt" type="number" step="any" min="0" placeholder="0"></div>
+   <div class="fit"><button id="btnSave" class="p">Add</button></div>
+   <div class="fit"><button id="btnCancel" hidden>Cancel</button></div>
+  </div>
+ </div>
+
+ <div class="card noprint">
+  <div class="row">
+   <div><label>From</label><input id="rFrom" type="date"></div>
+   <div><label>To</label><input id="rTo" type="date"></div>
+  </div>
+  <div class="chips" id="quick">
+   <button data-q="today">Today</button>
+   <button data-q="week">This week</button>
+   <button data-q="last7">Last 7 days</button>
+   <button data-q="month">This month</button>
+   <button data-q="lastmonth">Last month</button>
+  </div>
+ </div>
+
+ <div class="grid g4" id="stats"></div>
+
+ <div class="card" style="margin-top:14px">
+  <h2>Daily balance</h2>
+  <div class="scroll"><table id="daily"></table></div>
+ </div>
+
+ <div class="grid g2">
+  <div class="card"><h2>Expenses by category</h2><div class="scroll"><table id="cat"></table></div></div>
+  <div class="card"><h2>All entries</h2><div class="scroll"><table id="list"></table></div></div>
+ </div>
+
+ <div class="note noprint">Your data is saved in this browser on this device only. Use <b>Backup</b> regularly and keep the file safe. <b>Save report as PDF</b> opens the print window: choose "Save as PDF".</div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var KEY="biz_balance_tracker_v1";
+var DEFAULT_CATS=["Meta ads","TikTok ads","Stock purchase","Courier / return charges","Packaging","Salary","Rent & bills","Other"];
+var S=load();
+var editingId=null;
+var range={from:"",to:""};
+var $=function(id){return document.getElementById(id)};
+
+function load(){
+  try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.entries)return s}catch(e){}
+  return {biz:"Meit Shop",opening:{},entries:[]};
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){alert("Could not save in this browser. Use Backup to keep your data.")}}
+
+function pad(n){return (n<10?"0":"")+n}
+function ymd(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function parse(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2])}
+function addDays(s,n){var d=parse(s);d.setDate(d.getDate()+n);return ymd(d)}
+function monthOf(s){return s.slice(0,7)}
+function prevMonth(m){var p=m.split("-");var d=new Date(+p[0],+p[1]-2,1);return d.getFullYear()+"-"+pad(d.getMonth()+1)}
+function lastDay(m){var p=m.split("-");return ymd(new Date(+p[0],+p[1],0))}
+function fmt(n){var s=Math.abs(Math.round(n*100)/100).toLocaleString("en-PK",{maximumFractionDigits:2});return (n<0?"-":"")+"Rs "+s}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+function earliestMonth(){
+  var m=null;S.entries.forEach(function(e){var x=monthOf(e.date);if(!m||x<m)m=x});
+  Object.keys(S.opening).forEach(function(x){if(!m||x<m)m=x});
+  return m;
+}
+function net(m,upTo){ // net of entries in month m up to date (inclusive); upTo null = whole month
+  var t=0;S.entries.forEach(function(e){
+    if(monthOf(e.date)===m && (!upTo||e.date<=upTo)) t+= e.type==="in"?e.amount:-e.amount;
+  });return t;
+}
+function monthOpening(m){
+  if(S.opening[m]!=null)return S.opening[m];
+  var first=earliestMonth();
+  if(!first||m<=first)return 0;
+  var pm=prevMonth(m);
+  return monthOpening(pm)+net(pm,null);
+}
+function isAuto(m){return S.opening[m]==null}
+function balanceAt(date){ // closing balance at end of date
+  var m=monthOf(date);return monthOpening(m)+net(m,date);
+}
+
+function setRange(f,t){range.from=f;range.to=t;$("rFrom").value=f;$("rTo").value=t;render()}
+function quick(q){
+  var today=ymd(new Date()),d=new Date();
+  if(q==="today")setRange(today,today);
+  if(q==="last7")setRange(addDays(today,-6),today);
+  if(q==="week"){var dow=(d.getDay()+6)%7;var st=addDays(today,-dow);setRange(st,addDays(st,6))}
+  if(q==="month"){var m=monthOf(today);setRange(m+"-01",lastDay(m))}
+  if(q==="lastmonth"){var pm=prevMonth(monthOf(today));setRange(pm+"-01",lastDay(pm))}
+  var btns=document.querySelectorAll("#quick button");
+  for(var i=0;i<btns.length;i++)btns[i].classList.toggle("on",btns[i].getAttribute("data-q")===q);
+}
+
+function render(){
+  var f=range.from,t=range.to;
+  if(!f||!t||f>t){return}
+  // opening card
+  var mp=$("monthPick").value||monthOf(f);
+  $("openingInput").value=S.opening[mp]!=null?S.opening[mp]:"";
+  $("openingInput").placeholder=isAuto(mp)?("auto: "+Math.round(monthOpening(mp))):"auto";
+  $("openingNote").textContent=isAuto(mp)
+    ? "Opening for "+mp+" is carried over from the previous month: "+fmt(monthOpening(mp))+". Type an amount and Save to set it yourself (for example the money you put in the account at the start of the month)."
+    : "Opening for "+mp+" is set by you: "+fmt(monthOpening(mp))+".";
+
+  // daily rows
+  var rows=[],cur=f,guard=0;
+  var inD={},outD={};
+  S.entries.forEach(function(e){
+    if(e.date<f||e.date>t)return;
+    if(e.type==="in")inD[e.date]=(inD[e.date]||0)+e.amount;else outD[e.date]=(outD[e.date]||0)+e.amount;
+  });
+  var openRange=balanceAt(addDays(f,-1));
+  var bal=openRange,totIn=0,totOut=0;
+  while(cur<=t&&guard++<800){
+    var i=inD[cur]||0,o=outD[cur]||0;
+    // month opening reset: if a new month starts with an explicit opening, use the month's own running balance
+    var close=balanceAt(cur);
+    var open=balanceAt(addDays(cur,-1));
+    // if explicit opening was set for this month and this is day 1, treat as top-up so that rows reconcile
+    var adj=0;
+    if(cur.slice(8)==="01"&&Math.abs(open+i-o-close)>0.005){adj=close-(open+i-o)}
+    rows.push({d:cur,open:open,i:i,o:o,adj:adj,close:close});
+    totIn+=i;totOut+=o;cur=addDays(cur,1);
+  }
+  var closeRange=balanceAt(t);
+  var topups=rows.reduce(function(a,r){return a+r.adj},0);
+
+  var today=ymd(new Date());
+  var balNow=balanceAt(today);
+  var stats=[
+    ["Remaining balance today",fmt(balNow),balNow<0?"neg":""],
+    ["Balance at start of period",fmt(openRange),""],
+    ["Money added in period",fmt(totIn+(topups>0?topups:0)),"in"],
+    ["Expenses in period",fmt(totOut+(topups<0?-topups:0)),"out"],
+    ["Balance at end of period",fmt(closeRange),closeRange<0?"neg":""]
+  ];
+  $("stats").innerHTML=stats.map(function(s){return '<div class="card stat" style="margin:0"><div class="l">'+s[0]+'</div><div class="v '+s[2]+'">'+s[1]+'</div></div>'}).join("");
+
+  var h='<thead><tr><th>Date</th><th class="n">Opening</th><th class="n">Money in</th><th class="n">Expenses</th><th class="n">Remaining</th></tr></thead><tbody>';
+  rows.forEach(function(r){
+    var inShow=r.i+(r.adj>0?r.adj:0),outShow=r.o+(r.adj<0?-r.adj:0);
+    var z=(!inShow&&!outShow)?' class="zero"':'';
+    h+='<tr'+z+'><td>'+r.d+'</td><td class="n">'+fmt(r.open)+'</td><td class="n in">'+(inShow?fmt(inShow):"")+'</td><td class="n out">'+(outShow?fmt(outShow):"")+'</td><td class="n '+(r.close<0?"neg":"")+'"><b>'+fmt(r.close)+'</b></td></tr>';
+  });
+  h+='</tbody><tfoot><tr><td>Total</td><td class="n">'+fmt(openRange)+'</td><td class="n in">'+fmt(totIn+(topups>0?topups:0))+'</td><td class="n out">'+fmt(totOut+(topups<0?-topups:0))+'</td><td class="n">'+fmt(closeRange)+'</td></tr></tfoot>';
+  $("daily").innerHTML=h;
+  if(topups!==0)$("openingNote").textContent+=" The opening you set for a month in this period is shown as money added (or removed) on day 1.";
+
+  // categories
+  var cats={},ents=S.entries.filter(function(e){return e.date>=f&&e.date<=t}).sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:a.id-b.id});
+  ents.forEach(function(e){if(e.type==="out"){var c=e.cat||"Uncategorised";cats[c]=(cats[c]||0)+e.amount}});
+  var ck=Object.keys(cats).sort(function(a,b){return cats[b]-cats[a]});
+  var sumOut=ck.reduce(function(a,k){return a+cats[k]},0);
+  var ch='<thead><tr><th>Category</th><th class="n">Spent</th><th class="n">Share</th></tr></thead><tbody>';
+  if(!ck.length)ch+='<tr><td colspan="3" class="empty">No expenses in this period.</td></tr>';
+  ck.forEach(function(k){ch+='<tr><td>'+esc(k)+'</td><td class="n out">'+fmt(cats[k])+'</td><td class="n">'+(sumOut?Math.round(cats[k]/sumOut*100):0)+'%</td></tr>'});
+  ch+='</tbody>'+(ck.length?'<tfoot><tr><td>Total expenses</td><td class="n out">'+fmt(sumOut)+'</td><td></td></tr></tfoot>':'');
+  $("cat").innerHTML=ch;
+
+  // entries
+  var lh='<thead><tr><th>Date</th><th>Category / note</th><th class="n">Amount</th><th class="noprint"></th></tr></thead><tbody>';
+  if(!ents.length)lh+='<tr><td colspan="4" class="empty">No entries in this period.</td></tr>';
+  ents.forEach(function(e){
+    lh+='<tr><td>'+e.date+'</td><td>'+(e.type==="in"?'<b>Money added</b>':esc(e.cat||"Uncategorised"))+(e.note?'<div class="note">'+esc(e.note)+'</div>':'')+'</td><td class="n '+(e.type==="in"?"in":"out")+'">'+(e.type==="in"?"+":"-")+fmt(e.amount).replace("-","")+'</td><td class="noprint" style="white-space:nowrap"><button class="s" data-edit="'+e.id+'">Edit</button> <button class="s" data-del="'+e.id+'">Delete</button></td></tr>';
+  });
+  lh+='</tbody>';
+  $("list").innerHTML=lh;
+
+  $("phTitle").textContent=(S.biz||"Business")+" – Balance report";
+  $("phRange").textContent="Period: "+f+" to "+t+"   |   Generated: "+ymd(new Date());
+
+  // category suggestions
+  var all={};DEFAULT_CATS.forEach(function(c){all[c]=1});S.entries.forEach(function(e){if(e.cat)all[e.cat]=1});
+  $("cats").innerHTML=Object.keys(all).map(function(c){return '<option value="'+esc(c)+'">'}).join("");
+}
+
+function resetForm(){
+  editingId=null;$("formTitle").textContent="Add money or expense";$("btnSave").textContent="Add";$("btnCancel").hidden=true;
+  $("fNote").value="";$("fAmt").value="";
+}
+function saveEntry(){
+  var date=$("fDate").value,type=$("fType").value,amt=parseFloat($("fAmt").value);
+  if(!date){alert("Choose a date.");return}
+  if(!(amt>0)){alert("Enter an amount above 0.");return}
+  var e={date:date,type:type,cat:$("fCat").value.trim(),note:$("fNote").value.trim(),amount:amt};
+  if(editingId!=null){S.entries=S.entries.map(function(x){return x.id===editingId?Object.assign({id:x.id},e):x})}
+  else{e.id=Date.now()+Math.floor(Math.random()*1000);S.entries.push(e)}
+  save();resetForm();
+  if(date<range.from||date>range.to){setRange(date<range.from?date:range.from,date>range.to?date:range.to)}else render();
+  $("fAmt").focus();
+}
+
+// events
+$("btnSave").onclick=saveEntry;
+$("btnCancel").onclick=resetForm;
+$("fAmt").addEventListener("keydown",function(e){if(e.key==="Enter")saveEntry()});
+$("bizName").addEventListener("input",function(){S.biz=this.value;save();render()});
+$("monthPick").addEventListener("change",render);
+$("btnOpening").onclick=function(){
+  var m=$("monthPick").value,v=parseFloat($("openingInput").value);
+  if(!m){alert("Choose a month.");return}
+  if(isNaN(v)){alert("Type the opening balance amount first.");return}
+  S.opening[m]=v;save();render();
+};
+$("btnOpeningAuto").onclick=function(){var m=$("monthPick").value;delete S.opening[m];save();render()};
+$("rFrom").addEventListener("change",function(){range.from=this.value;render()});
+$("rTo").addEventListener("change",function(){range.to=this.value;render()});
+$("quick").addEventListener("click",function(e){var q=e.target.getAttribute("data-q");if(q)quick(q)});
+$("list").addEventListener("click",function(e){
+  var d=e.target.getAttribute("data-del"),ed=e.target.getAttribute("data-edit");
+  if(d){if(confirm("Delete this entry?")){S.entries=S.entries.filter(function(x){return String(x.id)!==d});save();render()}}
+  if(ed){var x=S.entries.filter(function(y){return String(y.id)===ed})[0];if(!x)return;
+    editingId=x.id;$("fDate").value=x.date;$("fType").value=x.type;$("fCat").value=x.cat||"";$("fNote").value=x.note||"";$("fAmt").value=x.amount;
+    $("formTitle").textContent="Edit entry";$("btnSave").textContent="Save changes";$("btnCancel").hidden=false;window.scrollTo(0,0)}
+});
+$("btnPdf").onclick=function(){window.print()};
+function download(name,text,type){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+$("btnBackup").onclick=function(){download("balance-tracker-backup-"+ymd(new Date())+".json",JSON.stringify(S,null,1),"application/json")};
+$("btnRestore").onclick=function(){$("fileRestore").click()};
+$("fileRestore").addEventListener("change",function(){
+  var f=this.files[0];if(!f)return;var r=new FileReader();
+  r.onload=function(){try{var d=JSON.parse(r.result);if(!d||!Array.isArray(d.entries))throw 0;
+    if(confirm("Replace the data in this browser with the backup ("+d.entries.length+" entries)?")){S={biz:d.biz||"",opening:d.opening||{},entries:d.entries};save();init()}}
+    catch(e){alert("That file is not a valid backup.")}};
+  r.readAsText(f);this.value="";
+});
+$("btnCsv").onclick=function(){
+  var f=range.from,t=range.to,lines=["Date,Type,Category,Note,Amount"];
+  S.entries.filter(function(e){return e.date>=f&&e.date<=t}).sort(function(a,b){return a.date<b.date?-1:1}).forEach(function(e){
+    lines.push([e.date,e.type==="in"?"Money added":"Expense",e.cat||"",e.note||"",e.amount].map(function(c){c=String(c);return /[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(","))});
+  download("entries-"+f+"-to-"+t+".csv",lines.join("\n"),"text/csv");
+};
+
+function init(){
+  var today=ymd(new Date());
+  $("bizName").value=S.biz||"";
+  $("monthPick").value=monthOf(today);
+  $("fDate").value=today;
+  quick("month");
+}
+window.__tracker={S:function(){return S},render:render,setRange:setRange,balanceAt:balanceAt};
+init();
+})();
+</script>
+</body>
+</html>
